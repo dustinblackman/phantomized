@@ -1,0 +1,45 @@
+{
+  "name": "phantomized",
+  "version": "0.0.1",
+  "description": "Simple script that creates releases for just the dynamic ELFs required by PhantomJS",
+  "main": "index.js",
+  "scripts": {
+    "build": "docker build --rm -t phantomized .",
+    "create": "babel-node index.js",
+    "start": "npm run build && docker run -e GITHUB_TOKEN=$GITHUB_TOKEN -e PHANTOM_VERSION=2.1.1 phantomized",
+    "test": "eslint ."
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Gravebot/phantomized.git"
+  },
+  "author": "Dustin Blackman",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Gravebot/phantomized/issues"
+  },
+  "homepage": "https://github.com/Gravebot/phantomized#readme",
+  "dependencies": {
+    "babel-cli": "^6.5.1",
+    "babel-preset-es2015-node4": "^2.0.3",
+    "bluebird": "^3.3.1",
+    "commander": "^2.9.0",
+    "fs-extra": "^0.26.5",
+    "github": "^0.2.4",
+    "ramda": "^0.19.1",
+    "request": "^2.69.0"
+  },
+  "devDependencies": {
+    "babel-eslint": "^5.0.0",
+    "eslint": "^1.10.3",
+    "eslint-config-busbud": "^0.1.2",
+    "eslint-config-semistandard": "^5.0.0",
+    "eslint-config-standard": "^4.4.0",
+    "eslint-plugin-standard": "^1.3.2"
+  },
+  "babel": {
+    "presets": [
+      "es2015-node4"
+    ]
+  }
+}
