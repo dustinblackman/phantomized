@@ -93,7 +93,7 @@ request(download_options)
       repo: 'phantomized',
       tag_name: process.env.PHANTOM_VERSION,
       draft: true,
-      name: `Phantomize ${process.env.PHANTOM_VERSION}`
+      name: `Phantomized ${process.env.PHANTOM_VERSION}`
     });
   })
   .then(release => releases.uploadAssetAsync({
