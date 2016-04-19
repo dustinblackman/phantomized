@@ -12,7 +12,7 @@ Adding this line to your Dockerfile applies all files to your docker image. You 
 curl -Ls "https://github.com/dustinblackman/phantomized/releases/download/2.1.1/dockerized-phantomjs.tar.gz" | tar xz -C /
 ```
 
-## Build
+## Build from source
 
 Make sure your have your docker environment set up correctly, and run the build script. Running the build script will build the docker container and copy the newly created `dockerized-phantomjs.tar.gz` to your current working directory.
 
