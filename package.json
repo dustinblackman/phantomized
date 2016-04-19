@@ -1,12 +1,13 @@
 {
   "name": "phantomized",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "Simple script that creates releases for just the dynamic ELFs required by PhantomJS",
   "main": "index.js",
   "scripts": {
     "build": "docker build --rm -t phantomized .",
     "create": "babel-node index.js",
-    "start": "npm run build && docker run -e GITHUB_TOKEN=$GITHUB_TOKEN -e PHANTOM_VERSION=2.1.1 phantomized",
+    "start": "./build.sh",
+    "release": "npm run build && docker run -e PHANTOM_VERSION=2.1.1 -e GITHUB_TOKEN=$GITHUB_TOKEN phantomized",
     "test": "eslint ."
   },
   "repository": {
@@ -41,5 +42,8 @@
     "presets": [
       "es2015-node4"
     ]
+  },
+  "eslintConfig": {
+    "extends": "busbud"
   }
 }

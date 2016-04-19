@@ -30,35 +30,50 @@ function spawnAsync(cmd) {
   });
 }
 
-if (!process.env.GITHUB_TOKEN) {
-  console.log('Github token is missing from env. Exiting...');
-  process.exit(1);
-}
-
 if (!process.env.PHANTOM_VERSION) {
   console.log('Phantom version is missing from env. Exiting...');
   process.exit(1);
 }
-
-const github = new Github({
-  version: '3.0.0',
-  protocol: 'https',
-  timeout: 5000,
-  headers: {
-    'user-agent': 'Phantomized-Gulp-Release'
-  }
-});
-github.authenticate({
-  type: 'oauth',
-  token: process.env.GITHUB_TOKEN
-});
-const releases = Promise.promisifyAll(github.releases);
 
 console.log(`Downloading PhantomJS ${process.env.PHANTOM_VERSION}`);
 const download_options = {
   url: `https://bitbucket.org/ariya/phantomjs/downloads/phantomjs-${process.env.PHANTOM_VERSION}-linux-x86_64.tar.bz2`,
   encoding: null
 };
+
+
+function releaseToGithub() {
+  const github = new Github({
+    version: '3.0.0',
+    protocol: 'https',
+    timeout: 5000,
+    headers: {
+      'user-agent': 'Phantomized-Gulp-Release'
+    }
+  });
+  github.authenticate({
+    type: 'oauth',
+    token: process.env.GITHUB_TOKEN
+  });
+  const releases = Promise.promisifyAll(github.releases);
+
+  console.log('Uploading release to Github');
+  process.chdir('../');
+  return releases.createReleaseAsync({
+    owner: 'Gravebot',
+    repo: 'phantomized',
+    tag_name: process.env.PHANTOM_VERSION,
+    draft: true,
+    name: `Phantomized ${process.env.PHANTOM_VERSION}`
+  })
+  .then(release => releases.uploadAssetAsync({
+    owner: 'Gravebot',
+    repo: 'phantomized',
+    id: release.id,
+    name: 'dockerized-phantomjs.tar.gz',
+    filePath: './dockerized-phantomjs.tar.gz'
+  }));
+}
 
 request(download_options)
   .then(res => fs.writeFileAsync('./phantomjs.tar.bz2', res.body, null))
@@ -86,23 +101,8 @@ request(download_options)
     return execSync('tar -zcf ../dockerized-phantomjs.tar.gz ./*');
   })
   .then(() => {
-    console.log('Uploading release to Github');
-    process.chdir('../');
-    return releases.createReleaseAsync({
-      owner: 'Gravebot',
-      repo: 'phantomized',
-      tag_name: process.env.PHANTOM_VERSION,
-      draft: true,
-      name: `Phantomized ${process.env.PHANTOM_VERSION}`
-    });
+    if (process.env.GITHUB_TOKEN) return releaseToGithub();
   })
-  .then(release => releases.uploadAssetAsync({
-    owner: 'Gravebot',
-    repo: 'phantomized',
-    id: release.id,
-    name: 'dockerized-phantomjs.tar.gz',
-    filePath: './dockerized-phantomjs.tar.gz'
-  }))
   .then(() => console.log('Done'))
   .catch(err => {
     console.log(err.stack || err);
