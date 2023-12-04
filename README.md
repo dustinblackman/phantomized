@@ -1,3 +1,7 @@
+# Stop using PhantomJS
+
+https://dustinblackman.com/posts/stop-using-phantomjs/
+
 # Phantomized
 
 An automated build to tar up dynamic ELFs required by PhantomJS using Dockerized. This makes dockerizing PhantomJS with base images like Alpine Linux easy.
